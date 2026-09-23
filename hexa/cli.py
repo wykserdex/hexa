@@ -115,10 +115,14 @@ def cmd_gsi(args: argparse.Namespace) -> int:
         return 0
 
     from hexa.bridges.gsi import GsiReceiver
+    from hexa.live import attach_live, write_live
+
+    attach_live(runtime, runtime.config, sound=bool(getattr(args, "sound", False)))
 
     def on_state(state) -> None:
         registry.on_state(state)
         registry.on_tick(state.t)
+        write_live(runtime.config, runtime, state)
         if runtime.verbose and state.hero:
             print(f"  GSI t={fmt_time(state.t)} {state.hero} hp={state.hp:.0f}/{state.max_hp:.0f}")
 
@@ -180,9 +184,14 @@ def cmd_serve(args: argparse.Namespace) -> int:
     print(f"[+] режим: {'ПЕСОЧНИЦА — действия уходят в игру через мост' if runtime.sandbox else 'обычный — действия только в трейсе'}")
     print(f"[+] модули: {', '.join(m.key for m in registry.enabled_modules()) or '—'}\n")
 
+    from hexa.live import attach_live, write_live
+
+    attach_live(runtime, runtime.config, sound=bool(getattr(args, "sound", False)))
+
     def on_state(state) -> None:
         registry.on_state(state)
         registry.on_tick(state.t)
+        write_live(runtime.config, runtime, state)
         if state.hero:
             bridge.last_hero = {
                 "name": state.hero,
@@ -242,11 +251,20 @@ def main(argv: list[str] | None = None) -> int:
     p_lab.set_defaults(func=cmd_lab)
 
     p_serve = sub.add_parser("serve", help="GSI + мост действий в игру (носитель)")
+    p_serve.add_argument("--sound", action="store_true", help="звук на таймеры (слышно без сворачивания)")
     p_serve.set_defaults(func=cmd_serve)
 
     p_gsi = sub.add_parser("gsi", help="приёмник Game State Integration")
     p_gsi.add_argument("--write-cfg", help="только сгенерировать конфиг для Доты")
+    p_gsi.add_argument("--sound", action="store_true", help="звук на таймеры (слышно без сворачивания)")
     p_gsi.set_defaults(func=cmd_gsi)
+
+    def cmd_overlay(args: argparse.Namespace) -> int:
+        from hexa.overlay import run as overlay_run
+
+        return overlay_run()
+
+    sub.add_parser("overlay", help="окно поверх игры: таймеры из live.json").set_defaults(func=cmd_overlay)
 
     p_pan = sub.add_parser("build-panorama", help="собрать патч интерфейса")
     p_pan.add_argument("--out", default="build/panorama")

@@ -54,7 +54,10 @@ class Runtime:
         self.notifications.append(note)
         self.bus.publish(Event("notify", {"note": note}, t=self.now))
         if self.verbose:
-            print(f"  {note.kind_icon()} {note.line()}")
+            try:
+                print(f"  {note.kind_icon()} {note.line()}")
+            except UnicodeEncodeError:
+                print(f"  [{note.kind}] {note.title}")
         return note
 
     # ------------------------------------------------------------ действия в игру
