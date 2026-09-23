@@ -1,0 +1,49 @@
+/* HEXA · styling.css — для Minify (styling.txt) */
+:root {
+    --hexa-accent: #7dd3fc;
+    --hexa-hud-scale: 1.0;
+    --hexa-minimap-scale: 1.0;
+}
+
+#HeroDetails,
+#AbilityList,
+#ItemsContainer {
+    border-color: var(--hexa-accent);
+}
+
+#minimap {
+    transform: scale(var(--hexa-minimap-scale));
+    transform-origin: bottom left;
+}
+
+#AbilityList,
+#ItemsContainer {
+    transform: scale(var(--hexa-hud-scale));
+    transform-origin: bottom center;
+}
+
+/* Панель таймеров: заполняет hexa_hud.js в кастомке */
+#HexaTimersPanel {
+    position: absolute;
+    top: 18px;
+    left: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 8px 10px;
+    background-color: rgba(11, 14, 20, 0.72);
+    border: 1px solid var(--hexa-accent);
+    border-radius: 8px;
+    font-family: "Radiance", Radiance, sans-serif;
+    color: #e8edf6;
+}
+
+#HexaTimersPanel .hexa-row {
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+#HexaTimersPanel .hexa-time {
+    color: var(--hexa-accent);
+    margin-right: 8px;
+}

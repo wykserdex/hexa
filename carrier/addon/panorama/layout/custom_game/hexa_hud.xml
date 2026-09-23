@@ -1,0 +1,17 @@
+<!-- HEXA · разметка панели таймеров для кастомки.
+     Положить в: panorama/layout/custom_game/hexa_hud.xml
+     Стили — из styling.css (тот же селектор #HexaTimersPanel), скрипт — hexa_hud.js -->
+<root>
+    <styles>
+        <include src="file://{resources}/styles/custom_game/hexa_hud.css" />
+    </styles>
+
+    <scripts>
+        <include src="file://{resources}/scripts/custom_game/hexa_hud.js" />
+    </scripts>
+
+    <Panel class="HexaRoot" hittest="false">
+        <!-- Позиция и вид задаются в styling.css: #HexaTimersPanel -->
+        <Panel id="HexaTimersPanel" hittest="false" />
+    </Panel>
+</root>
