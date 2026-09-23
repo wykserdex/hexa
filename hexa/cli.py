@@ -228,6 +228,19 @@ def main(argv: list[str] | None = None) -> int:
     p_demo.add_argument("--preview", help="куда сохранить HTML меню")
     p_demo.set_defaults(func=cmd_demo)
 
+    def cmd_lab(args: argparse.Namespace) -> int:
+        from hexa.lab.server import serve
+        plugins_dir = Path(args.plugins_dir).expanduser() if args.plugins_dir else None
+        serve(args.host, args.port, Path(args.state_file).expanduser(), plugins_dir)
+        return 0
+
+    p_lab = sub.add_parser("lab", help="интерактивный полигон: симулятор, модули, планировщик")
+    p_lab.add_argument("--host", default="127.0.0.1", help="для live preview: 0.0.0.0")
+    p_lab.add_argument("--port", type=int, default=8080)
+    p_lab.add_argument("--state-file", default="~/.hexa/lab.json", help="конфиг модулей полигона")
+    p_lab.add_argument("--plugins-dir", default=None, help="каталог с плагинами LabModule (см. examples/plugins)")
+    p_lab.set_defaults(func=cmd_lab)
+
     p_serve = sub.add_parser("serve", help="GSI + мост действий в игру (носитель)")
     p_serve.set_defaults(func=cmd_serve)
 

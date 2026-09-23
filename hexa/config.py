@@ -6,6 +6,7 @@
 from __future__ import annotations
 
 import json
+from copy import deepcopy
 import os
 from pathlib import Path
 from typing import Any
@@ -66,12 +67,12 @@ DEFAULTS: dict[str, Any] = {
 
 def _deep_merge(base: dict, override: dict) -> dict:
     """Мержим так, чтобы новые дефолты подхватывались, а пользовательские правки не терялись."""
-    result = dict(base)
+    result = deepcopy(base)
     for key, value in (override or {}).items():
         if isinstance(value, dict) and isinstance(result.get(key), dict):
             result[key] = _deep_merge(result[key], value)
         else:
-            result[key] = value
+            result[key] = deepcopy(value)
     return result
 
 
@@ -79,7 +80,7 @@ class Config:
     def __init__(self, path: Path | str | None = None, autosave: bool = True) -> None:
         self.path = Path(path) if path else DEFAULT_PATH
         self.autosave = autosave
-        self.data: dict[str, Any] = dict(DEFAULTS)
+        self.data: dict[str, Any] = deepcopy(DEFAULTS)
 
         if self.path.exists():
             try:
@@ -87,7 +88,7 @@ class Config:
                 self.data = _deep_merge(DEFAULTS, stored)
             except (json.JSONDecodeError, OSError):
                 # битый конфиг не должен ронять обвязку: стартуем на дефолтах
-                self.data = dict(DEFAULTS)
+                self.data = deepcopy(DEFAULTS)
 
     # ------------------------------------------------------------ доступ
 
